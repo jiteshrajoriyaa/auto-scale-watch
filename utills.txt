@@ -1,0 +1,25 @@
+services:
+  database_service:
+    image: mongo
+    container_name: mongo_container
+    ports: 
+      - 27017:27017
+    volumes: 
+      - guru_volume:/data/db
+
+  auth_service:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth_container
+    depends_on: 
+      - database_service
+    ports:
+      - 3001:3001
+    environment:
+      MONGO_URL: mongodb://database_service:27017/guru
+      JWT_STRING: jitesh_guru_assignment
+
+
+volumes:
+  guru_volume:

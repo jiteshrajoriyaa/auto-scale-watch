@@ -1,0 +1,91 @@
+version: "3"
+services:   
+  mongodb:
+    image: mongo
+    container_name: mongo
+    ports: 
+      - 27017:27017
+    volumes: 
+      - guru_volume:/data/db
+
+  auth:
+    build:
+      context: ./auth
+    container_name: auth
+    depends_on: 
+      - mongodb
+    ports:
+      - 3001:3001
+    environment:
+      MONGO_URL: mongodb://mongodb:27017/guru
+      JWT_STRING: jitesh
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+
+  queue:
+    build:
+      context: ./queue
+    container_name: queues
+    depends_on:
+      - redis
+      - auth
+    ports:
+      - 8000:8000
+    environment:
+      JWT_STRING: jitesh
+      REDIS_URL: redis://redis:6379
+      MONGO_URL: mongodb://mongodb:27017/guru
+
+  worker:
+    build:
+      context: ./workers
+    container_name: worker
+    depends_on: 
+      - queue
+    ports:
+      - 5000:5000
+    environment:
+      REDIS_URL: redis://redis:6379
+      MONGO_URL: mongodb://mongodb:27017/guru
+  
+  prom-server:
+    image: prom/prometheus
+    container_name: prometheus
+    depends_on:
+      - auth
+      - queue
+      - worker
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    depends_on:
+      - prom-server
+    ports:
+    - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    depends_on:
+      - auth
+      - queue
+      - worker
+    ports:
+      - 3100:3100
+
+
+volumes:
+  guru_volume:
+  grafana-storage:
+
