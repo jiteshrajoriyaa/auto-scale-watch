@@ -56,8 +56,13 @@ Schema
 - Open the docker desktop
 - click on the link of grafana (this one in image)
   <img width="457" height="627" alt="image" src="https://github.com/user-attachments/assets/9f8cdc78-935b-4d54-a04d-617387e5be6e" />
+
 - username: admin
 - Password: admin
 - Click on dashboards
+  <img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/f40fbeaa-6fcb-4d6b-b936-fe79bd5756fd" />
+- After clicking on NodeJs Dashboard - This is your monitoring
+<img width="1920" height="1032" alt="image" src="https://github.com/user-attachments/assets/e888dbfc-a51c-4acc-a242-f66777080ade" />
+
   
 
